@@ -1,0 +1,1 @@
+# Application configuration and environment variables will be defined here 
