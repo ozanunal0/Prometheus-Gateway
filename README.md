@@ -129,6 +129,16 @@ class YourProvider(LLMProvider):
 This project is in active development. Contributions are welcome!
 
 ---
+## ⚠️ Security Disclaimer
+
+This project is built with a "security-first" mindset, incorporating best practices like PII scrubbing, authentication, and rate limiting. However, it is an open-source tool provided "as-is" and **has not been subjected to a professional, third-party security audit.**
+
+Security is complex. While Prometheus Gateway can be a powerful tool to enhance your security posture for LLM applications, it is **not a substitute for a comprehensive security assessment** of your own infrastructure and processes. Please perform your own security validation before using this project in production environments with highly sensitive data.
+
+I welcome feedback, vulnerability reports, and contributions from the security community to make this project more robust.
+
+---
+
 
 <div align="center">
   <sub>Built with ❤️ for the LLM community</sub>
