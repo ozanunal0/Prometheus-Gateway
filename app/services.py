@@ -2,6 +2,7 @@ from app.models import ChatCompletionRequest
 from app.providers.base import LLMProvider
 from app.providers.openai.provider import OpenAIProvider
 from app.providers.google.provider import GoogleProvider
+from app.providers.anthropic.provider import AnthropicProvider
 from app.cache import generate_cache_key, get_from_cache, set_to_cache
 from app.config import config
 
@@ -32,9 +33,11 @@ def get_provider(model_name: str) -> LLMProvider:
                 return OpenAIProvider(api_key=provider_config.api_key)
             elif provider_config.name == "google":
                 return GoogleProvider(api_key=provider_config.api_key)
+            elif provider_config.name == "anthropic":
+                return AnthropicProvider(api_key=provider_config.api_key)
             # Future providers can be added here:
-            # elif provider_config.name == "anthropic":
-            #     return AnthropicProvider(api_key=provider_config.api_key)
+            # elif provider_config.name == "cohere":
+            #     return CohereProvider(api_key=provider_config.api_key)
     
     # No provider found for the model
     raise ValueError(f"No provider found for model: {model_name}")
