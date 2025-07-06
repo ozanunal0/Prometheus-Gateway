@@ -127,10 +127,6 @@ class YourProvider(LLMProvider):
 
 This project is in active development. Contributions are welcome!
 
-## 📄 License
-
-MIT License - feel free to use this in your projects.
-
 ---
 
 <div align="center">
