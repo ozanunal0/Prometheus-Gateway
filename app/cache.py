@@ -54,7 +54,7 @@ async def get_from_cache(key: str) -> Optional[dict]:
             # Deserialize JSON back to Python dictionary
             return json.loads(cached_value)
         return None
-    except (json.JSONDecodeError, redis.exceptions.RedisError):
+    except (json.JSONDecodeError, aioredis.RedisError):
         # Return None if there's any error with cache retrieval
         return None
 
@@ -78,6 +78,6 @@ async def set_to_cache(key: str, value: dict, expire_seconds: int = 3600) -> boo
         # Store in Redis with expiration
         await redis_client.setex(key, expire_seconds, serialized_value)
         return True
-    except (json.JSONEncodeError, redis.exceptions.RedisError):
+    except (ValueError, aioredis.RedisError):
         # Return False if there's any error with cache storage
         return False 

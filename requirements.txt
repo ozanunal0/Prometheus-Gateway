@@ -4,4 +4,6 @@ pydantic
 pydantic-settings
 python-dotenv
 httpx
-redis[hiredis] 
+redis[hiredis]
+sqlmodel
+alembic 
