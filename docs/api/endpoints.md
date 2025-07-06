@@ -408,6 +408,6 @@ curl -X POST http://localhost:8000/v1/chat/completions \
 
 ## Next Steps
 
-- [Request Format](requests.md) - Detailed request specifications
-- [Response Format](responses.md) - Response structure details
-- [Error Handling](errors.md) - Error codes and handling
+- [Configuration Guide](../configuration/overview.md) - Configure your gateway
+- [Testing Guide](../development/testing.md) - Test your implementation
+- [Troubleshooting](../troubleshooting.md) - Common issues and solutions

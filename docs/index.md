@@ -91,14 +91,14 @@ uvicorn app.main:app --reload
 
 ## 📚 Documentation
 
-- [Installation Guide](getting-started/installation.md)
+- [Quick Start Guide](getting-started/quickstart.md)
 - [Configuration Reference](configuration/overview.md)
 - [API Documentation](api/endpoints.md)
-- [Development Guide](development/contributing.md)
+- [Testing Guide](development/testing.md)
 
 ## 🤝 Contributing
 
-We welcome contributions! Please see our [Contributing Guide](development/contributing.md) for details.
+We welcome contributions! Please see our [Testing Guide](development/testing.md) for development information.
 
 ## 📄 License
 
