@@ -1,42 +1,49 @@
-# Core business logic and external API calls will be defined here 
-
-import httpx
-
-from app.config import settings
 from app.models import ChatCompletionRequest
+from app.providers.base import LLMProvider
+from app.providers.openai.provider import OpenAIProvider
 
 
-async def forward_request_to_openai(request: ChatCompletionRequest) -> dict:
+def get_provider(model_name: str) -> LLMProvider:
     """
-    Forward a chat completion request to the OpenAI API.
+    Factory function to get the appropriate LLM provider based on model name.
     
-    This function takes a validated ChatCompletionRequest, constructs the appropriate
-    headers and payload, and forwards the request to OpenAI's chat completions endpoint.
+    This function examines the model name and returns the corresponding provider
+    instance. It serves as a central point for provider selection logic.
+    
+    Args:
+        model_name: The name of the model to determine the provider for.
+        
+    Returns:
+        LLMProvider: An instance of the appropriate provider class.
+        
+    Raises:
+        ValueError: If no provider is found for the given model name.
+    """
+    if model_name.startswith("gpt-"):
+        return OpenAIProvider()
+    
+    raise ValueError(f"No provider found for model: {model_name}")
+
+
+async def process_chat_completion(request: ChatCompletionRequest) -> dict:
+    """
+    Process a chat completion request using the appropriate provider.
+    
+    This function serves as the main service orchestrator. It uses the factory
+    to get the correct provider based on the model name and delegates the
+    actual completion generation to the selected provider.
     
     Args:
         request: The validated chat completion request containing model, messages, and options.
         
     Returns:
-        dict: The JSON response from OpenAI API containing the chat completion.
+        dict: The JSON response from the selected LLM provider.
         
     Raises:
-        httpx.HTTPStatusError: If the OpenAI API returns an HTTP error status.
+        ValueError: If no provider is found for the requested model.
+        httpx.HTTPStatusError: If the provider's API returns an HTTP error status.
         httpx.RequestError: If there's a network or request-related error.
     """
-    OPENAI_API_URL = "https://api.openai.com/v1/chat/completions"
-    
-    headers = {
-        'Content-Type': 'application/json',
-        'Authorization': f'Bearer {settings.OPENAI_API_KEY}'
-    }
-    
-    payload = request.model_dump(exclude_unset=True)
-    
-    async with httpx.AsyncClient() as client:
-        response = await client.post(
-            OPENAI_API_URL,
-            headers=headers,
-            json=payload
-        )
-        response.raise_for_status()
-        return response.json() 
+    provider = get_provider(request.model)
+    result = await provider.create_completion(request)
+    return result 

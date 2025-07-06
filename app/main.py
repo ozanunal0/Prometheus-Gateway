@@ -2,7 +2,7 @@ import httpx
 from fastapi import FastAPI, HTTPException
 
 from app.models import ChatCompletionRequest
-from app.services import forward_request_to_openai
+from app.services import process_chat_completion
 
 app = FastAPI()
 
@@ -10,23 +10,28 @@ app = FastAPI()
 @app.post("/v1/chat/completions")
 async def chat_completions(request: ChatCompletionRequest) -> dict:
     """
-    Forward chat completion requests to OpenAI API.
+    Process chat completion requests using the appropriate LLM provider.
     
     This endpoint receives chat completion requests, validates them using Pydantic models,
-    and forwards them to the OpenAI API while handling errors gracefully.
+    and forwards them to the appropriate LLM provider based on the model name.
     
     Args:
         request: The chat completion request containing model, messages, and options.
         
     Returns:
-        dict: The JSON response from OpenAI API containing the chat completion.
+        dict: The JSON response from the selected LLM provider.
         
     Raises:
-        HTTPException: If the OpenAI API returns an error or if there's a network issue.
+        HTTPException: If no provider is found for the model, or if the provider's API returns an error.
     """
     try:
-        result = await forward_request_to_openai(request=request)
+        result = await process_chat_completion(request=request)
         return result
+    except ValueError as exc:
+        raise HTTPException(
+            status_code=400,
+            detail=str(exc)
+        )
     except httpx.HTTPStatusError as exc:
         raise HTTPException(
             status_code=exc.response.status_code,

@@ -3,4 +3,5 @@ uvicorn[standard]
 pydantic
 pydantic-settings
 python-dotenv
-httpx 
+httpx
+redis[hiredis] 

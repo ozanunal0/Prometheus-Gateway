@@ -7,6 +7,8 @@ class Settings(BaseSettings):
     """Application settings loaded from environment variables."""
     
     OPENAI_API_KEY: str
+    REDIS_HOST: str = "redis"
+    REDIS_PORT: int = 6379
 
     class Config:
         env_file = ".env"
