@@ -2,6 +2,7 @@ from app.models import ChatCompletionRequest
 from app.providers.base import LLMProvider
 from app.providers.openai.provider import OpenAIProvider
 from app.cache import generate_cache_key, get_from_cache, set_to_cache
+from app.config import config
 
 
 def get_provider(model_name: str) -> LLMProvider:
@@ -9,7 +10,8 @@ def get_provider(model_name: str) -> LLMProvider:
     Factory function to get the appropriate LLM provider based on model name.
     
     This function examines the model name and returns the corresponding provider
-    instance. It serves as a central point for provider selection logic.
+    instance using the dynamic configuration from config.yaml. It serves as a 
+    data-driven routing engine that maps models to their providers.
     
     Args:
         model_name: The name of the model to determine the provider for.
@@ -20,9 +22,18 @@ def get_provider(model_name: str) -> LLMProvider:
     Raises:
         ValueError: If no provider is found for the given model name.
     """
-    if model_name.startswith("gpt-"):
-        return OpenAIProvider()
+    # Iterate through each provider configuration
+    for provider_config in config.providers:
+        # Check if the requested model is handled by this provider
+        if model_name in provider_config.models:
+            # Route based on provider name
+            if provider_config.name == "openai":
+                return OpenAIProvider(api_key=provider_config.api_key)
+            # Future providers can be added here:
+            # elif provider_config.name == "google":
+            #     return GoogleProvider(api_key=provider_config.api_key)
     
+    # No provider found for the model
     raise ValueError(f"No provider found for model: {model_name}")
 
 

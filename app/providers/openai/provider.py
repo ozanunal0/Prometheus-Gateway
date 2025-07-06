@@ -43,7 +43,7 @@ class OpenAIProvider(LLMProvider):
         
         headers = {
             'Content-Type': 'application/json',
-            'Authorization': f'Bearer {settings.OPENAI_API_KEY}'
+            'Authorization': f'Bearer {self.api_key}'
         }
         
         payload = request.model_dump(exclude_unset=True)

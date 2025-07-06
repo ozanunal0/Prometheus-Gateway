@@ -1,15 +1,15 @@
 import json
 import hashlib
+import os
 import redis.asyncio as aioredis
 from typing import Optional
 
 from app.models import ChatCompletionRequest
-from app.config import settings
 
 
 # Single, reusable asynchronous Redis client instance
 redis_client = aioredis.from_url(
-    f"redis://{settings.REDIS_HOST}:{settings.REDIS_PORT}",
+    f"redis://{os.getenv('REDIS_HOST', 'redis')}:{os.getenv('REDIS_PORT', '6379')}",
     decode_responses=True
 )
 
