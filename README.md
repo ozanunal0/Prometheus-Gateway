@@ -1,4 +1,5 @@
-# 🚀 Prometheus Gateway
+![banner.png](public/banner.png)
+# 🚀 Prometheus GENAI API Gateway
 
 > Enterprise-grade LLM API Gateway with built-in privacy protection, caching, and observability
 
