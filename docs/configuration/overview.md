@@ -280,7 +280,6 @@ services:
 
 ## Next Steps
 
-- [Provider Configuration](providers.md) - Detailed provider setup
-- [Caching Configuration](caching.md) - Cache optimization
-- [Security Configuration](security.md) - Security hardening
-- [Monitoring Configuration](monitoring.md) - Observability setup
+- [API Reference](../api/endpoints.md) - API documentation
+- [Testing Guide](../development/testing.md) - Testing information
+- [Troubleshooting](../troubleshooting.md) - Common issues and solutions

@@ -582,6 +582,6 @@ pytest --profile
 
 ## Next Steps
 
-- [Contributing Guide](contributing.md) - How to contribute tests
-- [Architecture](architecture.md) - Understanding the codebase
-- [CI/CD Pipeline](../deployment/ci-cd.md) - Automated testing
+- [Configuration Guide](../configuration/overview.md) - Configuration reference
+- [API Reference](../api/endpoints.md) - API documentation
+- [Troubleshooting](../troubleshooting.md) - Common issues and solutions

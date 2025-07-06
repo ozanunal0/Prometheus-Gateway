@@ -96,4 +96,4 @@ providers:
 
 - [Configuration Guide](../configuration/overview.md)
 - [API Reference](../api/endpoints.md)
-- [Features Overview](../features/providers.md)
+- [Testing Guide](../development/testing.md)

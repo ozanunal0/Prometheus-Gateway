@@ -150,7 +150,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Contributing
 
-See our [Contributing Guide](development/contributing.md) for information on how to contribute to this project.
+See our [Testing Guide](development/testing.md) for development and testing information.
 
 ## Support
 
