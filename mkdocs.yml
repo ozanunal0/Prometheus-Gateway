@@ -1,0 +1,118 @@
+site_name: Prometheus Gateway
+site_description: Multi-LLM Gateway with Advanced Caching and Monitoring
+site_author: Prometheus Gateway Team
+site_url: https://ozanunal0.github.io/Prometheus-Gateway
+
+repo_name: prometheus-gateway
+repo_url: https://github.com/ozanunal0/prometheus-gateway
+edit_uri: edit/main/docs/
+
+theme:
+  name: material
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: blue
+      accent: light blue
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: blue
+      accent: light blue
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.sections
+    - navigation.top
+    - navigation.tracking
+    - search.highlight
+    - search.share
+    - content.code.annotate
+    - content.code.copy
+    - content.tabs.link
+  icon:
+    repo: fontawesome/brands/github
+    edit: material/pencil
+    view: material/eye
+
+plugins:
+  - search
+  - mermaid2:
+      arguments:
+        theme: auto
+  - git-revision-date-localized:
+      enable_creation_date: true
+      type: timeago
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - attr_list
+  - md_in_html
+  - toc:
+      permalink: true
+  - tables
+  - footnotes
+
+nav:
+  - Home: index.md
+  - Getting Started:
+    - Installation: getting-started/installation.md
+    - Quick Start: getting-started/quickstart.md
+    - Docker Setup: getting-started/docker.md
+  - Configuration:
+    - Overview: configuration/overview.md
+    - Providers: configuration/providers.md
+    - Caching: configuration/caching.md
+    - Security: configuration/security.md
+    - Monitoring: configuration/monitoring.md
+  - API Reference:
+    - Endpoints: api/endpoints.md
+    - Request Format: api/requests.md
+    - Response Format: api/responses.md
+    - Error Handling: api/errors.md
+  - Features:
+    - Provider Support: features/providers.md
+    - Intelligent Routing: features/routing.md
+    - Two-Level Caching: features/caching.md
+    - Data Loss Prevention: features/dlp.md
+    - Rate Limiting: features/rate-limiting.md
+    - Monitoring: features/monitoring.md
+  - Development:
+    - Contributing: development/contributing.md
+    - Testing: development/testing.md
+    - Architecture: development/architecture.md
+  - Deployment:
+    - Docker: deployment/docker.md
+    - Kubernetes: deployment/kubernetes.md
+    - Environment Variables: deployment/environment.md
+  - Troubleshooting: troubleshooting.md
+  - Changelog: changelog.md
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/ozanunal0/prometheus-gateway
+    - icon: fontawesome/brands/docker
+      link: https://hub.docker.com/r/ozanunal0/prometheus-gateway
+  version:
+    provider: mike
+    default: latest
