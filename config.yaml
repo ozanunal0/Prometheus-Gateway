@@ -2,9 +2,7 @@
 
 providers:
   - name: "openai"
-    # This points to the environment variable containing the actual API key
     api_key_env: "OPENAI_API_KEY"
-    # List of models handled by this provider
     models:
       - "gpt-4o"
       - "gpt-4o-mini"
@@ -16,3 +14,10 @@ providers:
       - "gemini-2.5-flash"
       - "gemini-2.5-flash-lite-preview-06-17"
       - "gemini-2.5-pro"
+
+  - name: "anthropic"
+    api_key_env: "ANTHROPIC_API_KEY"
+    models:
+      - "claude-opus-4-20250514"
+      - "claude-sonnet-4-20250514"
+      - "claude-3-7-sonnet-latest"

@@ -13,4 +13,5 @@ presidio-anonymizer
 spacy
 starlette-prometheus
 PyYAML
-google-generativeai 
+google-generativeai
+anthropic 
