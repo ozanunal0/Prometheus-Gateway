@@ -6,4 +6,8 @@ python-dotenv
 httpx
 redis[hiredis]
 sqlmodel
-alembic 
+alembic
+slowapi
+presidio-analyzer
+presidio-anonymizer
+spacy 
