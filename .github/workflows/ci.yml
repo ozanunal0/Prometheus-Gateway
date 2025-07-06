@@ -1,0 +1,204 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, dev ]
+  pull_request:
+    branches: [ main, dev ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    services:
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    
+    strategy:
+      matrix:
+        python-version: [3.9, 3.10, 3.11]
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+    
+    - name: Cache dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements*.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install -r requirements-dev.txt
+        python -m spacy download en_core_web_lg
+    
+    - name: Run linting
+      run: |
+        black --check .
+        isort --check-only .
+        flake8 .
+        
+    - name: Run type checking
+      run: |
+        mypy app/
+        
+    - name: Run unit tests
+      run: |
+        pytest tests/unit/ -v --cov=app --cov-report=xml
+      env:
+        TEST_OPENAI_API_KEY: ${{ secrets.TEST_OPENAI_API_KEY }}
+        TEST_GOOGLE_API_KEY: ${{ secrets.TEST_GOOGLE_API_KEY }}
+        TEST_ANTHROPIC_API_KEY: ${{ secrets.TEST_ANTHROPIC_API_KEY }}
+        REDIS_HOST: localhost
+        REDIS_PORT: 6379
+        
+    - name: Run integration tests
+      run: |
+        pytest tests/integration/ -v --cov=app --cov-append --cov-report=xml
+      env:
+        TEST_OPENAI_API_KEY: ${{ secrets.TEST_OPENAI_API_KEY }}
+        TEST_GOOGLE_API_KEY: ${{ secrets.TEST_GOOGLE_API_KEY }}
+        TEST_ANTHROPIC_API_KEY: ${{ secrets.TEST_ANTHROPIC_API_KEY }}
+        REDIS_HOST: localhost
+        REDIS_PORT: 6379
+        
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v3
+      with:
+        file: ./coverage.xml
+        flags: unittests
+        name: codecov-umbrella
+        fail_ci_if_error: true
+
+  security:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python 3.11
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.11
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install -r requirements-dev.txt
+        pip install bandit safety
+    
+    - name: Run security checks with bandit
+      run: |
+        bandit -r app/ -f json -o bandit-report.json
+        bandit -r app/ -f txt
+        
+    - name: Check for known security vulnerabilities
+      run: |
+        safety check --json --output safety-report.json
+        safety check
+
+  docker:
+    runs-on: ubuntu-latest
+    needs: [test, security]
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+    
+    - name: Build Docker image
+      run: |
+        docker build -t prometheus-gateway:test .
+        
+    - name: Test Docker image
+      run: |
+        docker run --rm -d --name test-container \
+          -p 8000:8000 \
+          -e OPENAI_API_KEY=test-key \
+          prometheus-gateway:test
+        
+        # Wait for container to start
+        sleep 10
+        
+        # Test health endpoint
+        curl -f http://localhost:8000/health || exit 1
+        
+        # Cleanup
+        docker stop test-container
+
+  code-quality:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python 3.11
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.11
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install -r requirements-dev.txt
+        pip install radon xenon
+    
+    - name: Check code complexity
+      run: |
+        radon cc app/ --min C
+        radon mi app/ --min B
+        
+    - name: Check maintainability
+      run: |
+        radon hal app/
+        
+    - name: Check cyclomatic complexity
+      run: |
+        xenon --max-absolute B --max-modules A --max-average A app/
+
+  docs:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python 3.11
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.11
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install mkdocs mkdocs-material mkdocs-mermaid2-plugin
+    
+    - name: Build documentation
+      run: |
+        mkdocs build --strict
+        
+    - name: Deploy to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v3
+      if: github.ref == 'refs/heads/main'
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./site
