@@ -28,7 +28,8 @@ def generate_cache_key(request: ChatCompletionRequest) -> str:
         str: A SHA-256 hexadecimal digest as the cache key.
     """
     # Serialize request to JSON with sorted keys for consistency
-    request_json = request.model_dump_json(sort_keys=True)
+    request_dict = request.model_dump()
+    request_json = json.dumps(request_dict, sort_keys=True)
     
     # Generate SHA-256 hash of the serialized request
     hash_object = hashlib.sha256(request_json.encode('utf-8'))
