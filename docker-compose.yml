@@ -1,9 +1,16 @@
 version: '3.8'
 
 services:
+  redis:
+    image: redis:alpine
+    
   gateway:
     build: .
     ports:
       - "8000:8000"
     env_file:
-      - .env 
+      - .env
+    volumes:
+      - ./gateway.db:/code/gateway.db
+    depends_on:
+      - redis 

@@ -1,32 +1,50 @@
 import httpx
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Depends
 
 from app.models import ChatCompletionRequest
-from app.services import forward_request_to_openai
+from app.db_models.api_key import APIKey
+from app.services import process_chat_completion
+from app.database import create_db_and_tables
+from app.dependencies import get_valid_api_key
 
 app = FastAPI()
 
 
+@app.on_event("startup")
+def on_startup():
+    create_db_and_tables()
+
+
 @app.post("/v1/chat/completions")
-async def chat_completions(request: ChatCompletionRequest) -> dict:
+async def chat_completions(
+    request: ChatCompletionRequest,
+    api_key: APIKey = Depends(get_valid_api_key)
+) -> dict:
     """
-    Forward chat completion requests to OpenAI API.
+    Process chat completion requests using the appropriate LLM provider.
     
     This endpoint receives chat completion requests, validates them using Pydantic models,
-    and forwards them to the OpenAI API while handling errors gracefully.
+    and forwards them to the appropriate LLM provider based on the model name.
+    Access requires a valid API key in the X-API-Key header.
     
     Args:
         request: The chat completion request containing model, messages, and options.
+        api_key: The authenticated API key (injected by dependency).
         
     Returns:
-        dict: The JSON response from OpenAI API containing the chat completion.
+        dict: The JSON response from the selected LLM provider.
         
     Raises:
-        HTTPException: If the OpenAI API returns an error or if there's a network issue.
+        HTTPException: If no provider is found for the model, or if the provider's API returns an error.
     """
     try:
-        result = await forward_request_to_openai(request=request)
+        result = await process_chat_completion(request=request)
         return result
+    except ValueError as exc:
+        raise HTTPException(
+            status_code=400,
+            detail=str(exc)
+        )
     except httpx.HTTPStatusError as exc:
         raise HTTPException(
             status_code=exc.response.status_code,
