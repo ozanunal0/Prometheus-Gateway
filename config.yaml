@@ -10,8 +10,9 @@ providers:
       - "gpt-4o-mini"
       - "gpt-3.5-turbo"
 
-  # Example for a future provider
-  # - name: "google"
-  #   api_key_env: "GOOGLE_API_KEY"
-  #   models:
-  #     - "gemini-1.5-pro"
+  - name: "google"
+    api_key_env: "GOOGLE_API_KEY"
+    models:
+      - "gemini-2.5-flash"
+      - "gemini-2.5-flash-lite-preview-06-17"
+      - "gemini-2.5-pro"

@@ -12,4 +12,5 @@ presidio-analyzer
 presidio-anonymizer
 spacy
 starlette-prometheus
-PyYAML 
+PyYAML
+google-generativeai 
