@@ -1,25 +1,38 @@
-from functools import lru_cache
+import os
+import pathlib
+import yaml
+from pydantic import BaseModel
 
-from pydantic_settings import BaseSettings
+
+class ProviderConfig(BaseModel):
+    name: str
+    api_key_env: str
+    models: list[str]
+
+    @property
+    def api_key(self) -> str:
+        """Retrieves the API key from the environment variable."""
+        key = os.getenv(self.api_key_env)
+        if not key:
+            raise ValueError(f"Environment variable {self.api_key_env} not set.")
+        return key
 
 
-class Settings(BaseSettings):
-    """Application settings loaded from environment variables."""
+class Config(BaseModel):
+    providers: list[ProviderConfig]
+
+
+def load_config(config_path: str = "config.yaml") -> Config:
+    """Loads, parses, and validates the YAML configuration file."""
+    path = pathlib.Path(config_path)
+    if not path.is_file():
+        raise FileNotFoundError(f"Configuration file not found at {config_path}")
     
-    OPENAI_API_KEY: str
-    REDIS_HOST: str = "redis"
-    REDIS_PORT: int = 6379
-
-    class Config:
-        env_file = ".env"
-        case_sensitive = True
+    with open(path, "r") as f:
+        config_data = yaml.safe_load(f)
+    
+    return Config.model_validate(config_data)
 
 
-@lru_cache()
-def get_settings() -> Settings:
-    """Get cached settings instance."""
-    return Settings()
-
-
-# Global settings instance for easy access
-settings = get_settings() 
+# Singleton config instance
+config = load_config() 
