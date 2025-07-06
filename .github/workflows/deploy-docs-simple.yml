@@ -22,7 +22,7 @@ jobs:
           
       - name: Install dependencies
         run: |
-          pip install mkdocs mkdocs-material mkdocs-mermaid2-plugin
+          pip install mkdocs mkdocs-material mkdocs-mermaid2-plugin mkdocs-git-revision-date-localized-plugin
           
       - name: Deploy to GitHub Pages
         run: |
