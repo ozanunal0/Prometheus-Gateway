@@ -1,6 +1,5 @@
 import httpx
 
-from app.config import settings
 from app.models import ChatCompletionRequest
 from app.providers.base import LLMProvider
 
@@ -13,6 +12,15 @@ class OpenAIProvider(LLMProvider):
     chat completions API. It handles authentication, request formatting, and
     error handling for OpenAI API calls.
     """
+    
+    def __init__(self, api_key: str):
+        """
+        Initialize the OpenAI provider with an API key.
+        
+        Args:
+            api_key: The OpenAI API key for authentication.
+        """
+        self.api_key = api_key
     
     async def create_completion(self, request: ChatCompletionRequest) -> dict:
         """
