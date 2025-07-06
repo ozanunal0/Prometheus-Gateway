@@ -1,0 +1,17 @@
+# Prometheus Gateway Configuration
+
+providers:
+  - name: "openai"
+    # This points to the environment variable containing the actual API key
+    api_key_env: "OPENAI_API_KEY"
+    # List of models handled by this provider
+    models:
+      - "gpt-4o"
+      - "gpt-4o-mini"
+      - "gpt-3.5-turbo"
+
+  # Example for a future provider
+  # - name: "google"
+  #   api_key_env: "GOOGLE_API_KEY"
+  #   models:
+  #     - "gemini-1.5-pro"

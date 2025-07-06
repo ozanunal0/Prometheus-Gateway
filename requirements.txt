@@ -11,4 +11,5 @@ slowapi
 presidio-analyzer
 presidio-anonymizer
 spacy
-starlette-prometheus 
+starlette-prometheus
+PyYAML 
