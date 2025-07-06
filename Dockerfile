@@ -10,6 +10,9 @@ COPY requirements.txt /code/requirements.txt
 # Install Python dependencies
 RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
 
+# Download spaCy language model
+RUN python -m spacy download en_core_web_lg
+
 # Copy the application code
 COPY ./app /code/app
 COPY create_key.py /code/create_key.py
