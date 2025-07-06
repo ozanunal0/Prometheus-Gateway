@@ -106,6 +106,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🆘 Support
 
-- 📖 [Documentation](https://yourusername.github.io/prometheus-gateway)
-- 🐛 [Issue Tracker](https://github.com/yourusername/prometheus-gateway/issues)
-- 💬 [Discussions](https://github.com/yourusername/prometheus-gateway/discussions)
+- 📖 [Documentation](https://ozanunal0.github.io/prometheus-gateway)
+- 🐛 [Issue Tracker](https://github.com/ozanunal0/prometheus-gateway/issues)
+- 💬 [Discussions](https://github.com/ozanunal0/prometheus-gateway/discussions)
