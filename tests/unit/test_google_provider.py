@@ -112,7 +112,7 @@ class TestGoogleProvider:
         with patch('google.generativeai.GenerativeModel') as mock_model_class:
             mock_model = Mock()
             mock_response = create_mock_google_response("Test response from Gemini")
-            mock_model.generate_content_async.return_value = mock_response
+            mock_model.generate_content_async = AsyncMock(return_value=mock_response)
             mock_model_class.return_value = mock_model
             
             result = await provider.create_completion(sample_chat_request)
@@ -147,16 +147,18 @@ class TestGoogleProvider:
         """Test completion creation with default parameters."""
         provider = GoogleProvider(api_key="test-key")
         
-        # Create request without max_tokens and temperature
+        # Create request with explicit None values to test provider defaults
         request = ChatCompletionRequest(
             model="gemini-2.5-flash",
-            messages=[{"role": "user", "content": "Hello"}]
+            messages=[{"role": "user", "content": "Hello"}],
+            max_tokens=None,
+            temperature=None
         )
         
         with patch('google.generativeai.GenerativeModel') as mock_model_class:
             mock_model = Mock()
             mock_response = create_mock_google_response("Hello there!")
-            mock_model.generate_content_async.return_value = mock_response
+            mock_model.generate_content_async = AsyncMock(return_value=mock_response)
             mock_model_class.return_value = mock_model
             
             result = await provider.create_completion(request)
@@ -175,7 +177,7 @@ class TestGoogleProvider:
         
         with patch('google.generativeai.GenerativeModel') as mock_model_class:
             mock_model = Mock()
-            mock_model.generate_content_async.side_effect = Exception("Google API Error")
+            mock_model.generate_content_async = AsyncMock(side_effect=Exception("Google API Error"))
             mock_model_class.return_value = mock_model
             
             with pytest.raises(Exception) as exc_info:
