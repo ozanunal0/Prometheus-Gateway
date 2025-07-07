@@ -41,9 +41,15 @@ class GoogleProvider(LLMProvider):
         translated_messages = []
         
         for message in messages:
-            # Access Pydantic model attributes
-            role = message.role
-            content = message.content
+            # Handle both dict and Pydantic model formats
+            if hasattr(message, 'role'):
+                # Pydantic model
+                role = message.role
+                content = message.content
+            else:
+                # Dictionary format (for testing)
+                role = message["role"]
+                content = message["content"]
             
             # Map OpenAI roles to Google roles
             if role == "user":
@@ -132,13 +138,24 @@ class GoogleProvider(LLMProvider):
             google_messages = self._translate_messages_to_google(request.messages)
             
             # Estimate prompt tokens (rough approximation)
-            prompt_text = " ".join([msg.content for msg in request.messages])
+            prompt_text = " ".join([
+                msg.content if hasattr(msg, 'content') else msg["content"] 
+                for msg in request.messages
+            ])
             prompt_tokens = len(prompt_text.split())
             
             # Configure generation parameters
+            max_tokens = getattr(request, 'max_tokens', None)
+            if max_tokens is None:
+                max_tokens = 1000
+                
+            temperature = getattr(request, 'temperature', None)
+            if temperature is None:
+                temperature = 0.7
+                
             generation_config = genai.types.GenerationConfig(
-                max_output_tokens=getattr(request, 'max_tokens', 1000),
-                temperature=getattr(request, 'temperature', 0.7),
+                max_output_tokens=max_tokens,
+                temperature=temperature,
             )
             
             # Call Google Gemini API

@@ -167,11 +167,12 @@ class TestAnthropicProvider:
         """Test completion creation with default temperature."""
         provider = AnthropicProvider(api_key="test-key")
         
-        # Create request without temperature
+        # Create request with explicit None temperature to test provider default
         request = ChatCompletionRequest(
             model="claude-sonnet-4-20250514",
             messages=[{"role": "user", "content": "Hello"}],
-            max_tokens=100
+            max_tokens=100,
+            temperature=None
         )
         
         mock_client = Mock()

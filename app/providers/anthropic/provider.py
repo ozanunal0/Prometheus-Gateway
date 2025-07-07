@@ -41,9 +41,15 @@ class AnthropicProvider(LLMProvider):
         anthropic_messages = []
         
         for message in messages:
-            # Access Pydantic model attributes
-            role = message.role
-            content = message.content
+            # Handle both dict and Pydantic model formats
+            if hasattr(message, 'role'):
+                # Pydantic model
+                role = message.role
+                content = message.content
+            else:
+                # Dictionary format (for testing)
+                role = message["role"]
+                content = message["content"]
             
             # Anthropic supports user, assistant, and system roles
             # System messages can be passed directly
@@ -126,7 +132,7 @@ class AnthropicProvider(LLMProvider):
                 max_tokens = 4096
             
             # Prepare other parameters
-            temperature = getattr(request, 'temperature', 0.7)
+            temperature = getattr(request, 'temperature', None)
             if temperature is None:
                 temperature = 0.7
             
