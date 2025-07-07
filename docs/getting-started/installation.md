@@ -17,7 +17,7 @@ The easiest way to get started is with Docker Compose:
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/prometheus-gateway.git
+git clone https://github.com/ozanunal0/prometheus-gateway.git
 cd prometheus-gateway
 
 # Start all services
@@ -42,7 +42,7 @@ For development or customization:
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/prometheus-gateway.git
+git clone https://github.com/ozanunal0/prometheus-gateway.git
 cd prometheus-gateway
 
 # Create virtual environment

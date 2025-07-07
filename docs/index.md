@@ -77,7 +77,7 @@ Real-time monitoring with:
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/prometheus-gateway.git
+git clone https://github.com/ozanunal0/prometheus-gateway.git
 cd prometheus-gateway
 
 # Start with Docker Compose
