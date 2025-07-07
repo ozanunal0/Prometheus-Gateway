@@ -25,7 +25,7 @@ class AnthropicProvider(LLMProvider):
         self.api_key = api_key
         self.client = anthropic.AsyncAnthropic(api_key=self.api_key)
     
-    def _prepare_messages_for_anthropic(self, messages: List[Dict[str, str]]) -> List[Dict[str, str]]:
+    def _prepare_messages_for_anthropic(self, messages: List) -> List[Dict[str, str]]:
         """
         Prepare messages for Anthropic API format.
         
@@ -33,7 +33,7 @@ class AnthropicProvider(LLMProvider):
         ensure proper structure and handle any system messages appropriately.
         
         Args:
-            messages: List of messages in OpenAI format.
+            messages: List of ChatMessage objects.
             
         Returns:
             List of messages formatted for Anthropic API.
@@ -41,8 +41,9 @@ class AnthropicProvider(LLMProvider):
         anthropic_messages = []
         
         for message in messages:
-            role = message["role"]
-            content = message["content"]
+            # Access Pydantic model attributes
+            role = message.role
+            content = message.content
             
             # Anthropic supports user, assistant, and system roles
             # System messages can be passed directly

@@ -25,7 +25,7 @@ class GoogleProvider(LLMProvider):
         self.api_key = api_key
         genai.configure(api_key=self.api_key)
     
-    def _translate_messages_to_google(self, messages: List[Dict[str, str]]) -> List[Dict[str, str]]:
+    def _translate_messages_to_google(self, messages: List) -> List[Dict[str, str]]:
         """
         Translate OpenAI-format messages to Google Gemini format.
         
@@ -33,7 +33,7 @@ class GoogleProvider(LLMProvider):
         Google uses: [{"role": "user", "parts": ["..."]}, {"role": "model", "parts": ["..."]}]
         
         Args:
-            messages: List of messages in OpenAI format.
+            messages: List of ChatMessage objects.
             
         Returns:
             List of messages in Google Gemini format.
@@ -41,8 +41,9 @@ class GoogleProvider(LLMProvider):
         translated_messages = []
         
         for message in messages:
-            role = message["role"]
-            content = message["content"]
+            # Access Pydantic model attributes
+            role = message.role
+            content = message.content
             
             # Map OpenAI roles to Google roles
             if role == "user":
@@ -131,7 +132,7 @@ class GoogleProvider(LLMProvider):
             google_messages = self._translate_messages_to_google(request.messages)
             
             # Estimate prompt tokens (rough approximation)
-            prompt_text = " ".join([msg["content"] for msg in request.messages])
+            prompt_text = " ".join([msg.content for msg in request.messages])
             prompt_tokens = len(prompt_text.split())
             
             # Configure generation parameters
