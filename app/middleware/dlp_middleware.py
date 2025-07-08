@@ -69,14 +69,23 @@ class DlpMiddleware(BaseHTTPMiddleware):
                     # Reconstruct the request with the modified payload
                     modified_body = json.dumps(payload).encode('utf-8')
                     
-                    # Create a new request with the modified body
-                    # We need to handle this carefully to maintain the request stream
-                    request._body = modified_body
+                    # Create a new request scope with the modified body
+                    from starlette.requests import Request as StarletteRequest
+                    from starlette.datastructures import Headers
+                    import io
                     
-                    # Update content-length header to match new body size
-                    if hasattr(request, "_headers"):
-                        # Update headers if accessible
-                        request._headers["content-length"] = str(len(modified_body))
+                    # Create new scope with modified body
+                    new_scope = request.scope.copy()
+                    new_scope["body"] = modified_body
+                    
+                    # Update headers
+                    headers = dict(request.headers)
+                    headers["content-length"] = str(len(modified_body))
+                    new_scope["headers"] = [(k.encode(), v.encode()) for k, v in headers.items()]
+                    
+                    # Create new request with modified scope
+                    receive = lambda: {"type": "http.request", "body": modified_body, "more_body": False}
+                    request = StarletteRequest(scope=new_scope, receive=receive)
                     
             except Exception as e:
                 # Log error but don't block the request if DLP fails
