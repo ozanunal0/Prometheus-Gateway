@@ -78,10 +78,11 @@ async def process_chat_completion(request: ChatCompletionRequest) -> dict:
     prompt_text = ""
     if request.messages and len(request.messages) > 0:
         # Get the last user message content
-        prompt_text = request.messages[-1].get("content", "")
+        last_message = request.messages[-1]
+        prompt_text = last_message.content if hasattr(last_message, 'content') else ""
     
     # Search for semantically similar cached responses
-    semantic_redis_key = await search_semantic_cache(prompt_text)
+    semantic_redis_key = search_semantic_cache(prompt_text)
     if semantic_redis_key is not None:
         print("✅ SEMANTIC CACHE HIT!")
         # Retrieve the full response using the semantic cache's Redis key
