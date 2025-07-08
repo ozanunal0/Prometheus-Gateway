@@ -82,8 +82,22 @@ class GoogleProvider(LLMProvider):
         Returns:
             Dictionary in OpenAI response format.
         """
-        # Extract the response text
-        response_text = google_response.text if google_response.text else ""
+        # Extract the response text with safety handling
+        response_text = ""
+        try:
+            if hasattr(google_response, 'text') and google_response.text:
+                response_text = google_response.text
+            elif hasattr(google_response, 'candidates') and google_response.candidates:
+                # Try to extract from candidates if direct text access fails
+                candidate = google_response.candidates[0]
+                if hasattr(candidate, 'content') and candidate.content.parts:
+                    response_text = candidate.content.parts[0].text
+        except (ValueError, AttributeError) as e:
+            # Handle cases where content was blocked or empty
+            if "finish_reason" in str(e) and "2" in str(e):
+                response_text = "I cannot provide a response to that request due to safety guidelines."
+            else:
+                response_text = "I apologize, but I cannot generate a response at this time."
         
         # Estimate completion tokens (rough approximation)
         completion_tokens = len(response_text.split())
