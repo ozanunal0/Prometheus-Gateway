@@ -16,6 +16,7 @@ RUN python -m spacy download en_core_web_lg
 # Copy the application code
 COPY ./app /code/app
 COPY create_key.py /code/create_key.py
+COPY config.yaml /code/config.yaml
 
 # Command to run the application
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"] 
