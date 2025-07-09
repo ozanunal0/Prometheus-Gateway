@@ -1,6 +1,9 @@
 from sqlalchemy import create_engine
 from sqlmodel import SQLModel
 
+# Import all models to register them with SQLModel metadata
+from app.db_models.api_key import APIKey
+
 # Database URL for SQLite
 DATABASE_URL = "sqlite:///./gateway.db"
 
