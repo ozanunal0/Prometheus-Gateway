@@ -1,9 +1,10 @@
-version: '3.8'
-
+# docker-compose.yml (API Gateway)
 services:
   redis:
     image: redis:alpine
-    
+    networks:
+      - shared-app-network
+
   gateway:
     build: .
     ports:
@@ -11,10 +12,12 @@ services:
     env_file:
       - .env
     volumes:
-      - ./gateway.db:/code/gateway.db
+      - .:/code
     depends_on:
       - redis
-      
+    networks:
+      - shared-app-network
+
   prometheus:
     image: prom/prometheus:latest
     ports:
@@ -23,7 +26,9 @@ services:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
     depends_on:
       - gateway
-      
+    networks:
+      - shared-app-network
+
   grafana:
     image: grafana/grafana:latest
     ports:
@@ -32,3 +37,12 @@ services:
       - GF_SECURITY_ADMIN_PASSWORD=admin
     depends_on:
       - prometheus
+    networks:
+      - shared-app-network
+
+# volumes:
+#   gateway_db:
+
+networks:
+  shared-app-network:
+    external: true
